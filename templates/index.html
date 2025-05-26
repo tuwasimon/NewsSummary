@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUM TV News Finder</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: transparent;
+            background-clip: text;
+            -webkit-background-clip: text;
+            background-image: linear-gradient(135deg, #6a11cb, #2575fc);
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        header .subheading {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #555;
+            margin-top: 0.5rem;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        h1 {
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            color: black;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"] {
+            padding: 1rem;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #6a11cb;
+        }
+
+        button {
+            padding: 1rem;
+            font-size: 1rem;
+            color: white;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #results {
+            margin-top: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .article {
+            position: relative;
+            padding-bottom: 3rem; /* Add space for the button */
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .article:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .article h2 {
+            margin: 0;
+            padding: 1rem;
+            font-size: 1.2rem;
+            color: white;
+            background: black;
+        }
+
+        .article p {
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: black;
+            background: none;
+        }
+
+        .article a {
+            cursor: pointer;
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: inline-block;
+            margin: 0;
+            padding: 0.5rem 1rem;
+            text-align: center;
+            background: black;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .article a:hover {
+            background: #555;
+        }
+
+        .article .full-content {
+            display: none;
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: black;
+            background: #f9f9f9;
+            border-top: 1px solid #ddd;
+        }
+
+        .article.expanded .full-content {
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            color: black;
+            font-size: 0.9rem;
+            background: none;
+        }
+
+        .spinner {
+            display: none;
+            margin: 2rem auto;
+            border: 8px solid rgba(0, 0, 0, 0.1);
+            border-top: 8px solid #6a11cb;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .article h2 {
+                font-size: 1rem;
+            }
+
+            .article p, .article a {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        SUM TV News Finder
+        <div class="subheading">News In Summary</div>
+    </header>
+    <main>
+        <h1>Search for News</h1>
+        <form id="searchForm">
+            <label for="topic">Enter a topic:</label>
+            <input type="text" id="topic" name="topic" placeholder="e.g., Technology, Sports" required>
+            <button type="submit">Search</button>
+        </form>
+        <div class="spinner" id="loadingSpinner"></div>
+        <div id="results"></div>
+    </main>
+    <footer>
+        &copy; 2025 EvolveAI. All rights reserved.
+    </footer>
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const topic = document.getElementById('topic').value;
+
+            const spinner = document.getElementById('loadingSpinner');
+            const resultsDiv = document.getElementById('results');
+
+            // Show the spinner and clear previous results
+            spinner.style.display = 'block';
+            resultsDiv.innerHTML = '';
+
+            try {
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ topic })
+                });
+
+                const data = await response.json();
+
+                if (data.articles && data.articles.length > 0) {
+                    data.articles.forEach(article => {
+                        const articleDiv = document.createElement('div');
+                        articleDiv.classList.add('article');
+                        articleDiv.innerHTML = `
+                            <h2>${article.title}</h2>
+                            <p>${article.description || 'No description available.'}</p>
+                            <a href="${article.link}" target="_blank">Read full article</a>
+                            <div class="full-content">${article.content && article.content !== 'only available in paid plans' ? article.content : 'Full content not available. Please visit the original article.'}</div>
+                        `;
+                        resultsDiv.appendChild(articleDiv);
+                    });
+                } else {
+                    resultsDiv.innerHTML = '<p>No results found for the topic.</p>';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = '<p>Failed to fetch articles. Please try again later.</p>';
+            } finally {
+                // Hide the spinner
+                spinner.style.display = 'none';
+            }
+        });
+
+        // Expand or collapse article content on title click
+        document.getElementById('results').addEventListener('click', (e) => {
+            if (e.target.matches('.article a')) {
+                e.preventDefault();
+                const article = e.target.closest('.article');
+                article.classList.toggle('expanded');
+            }
+        });
+    </script>
+</body>
+</html>
