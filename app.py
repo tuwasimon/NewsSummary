@@ -3,10 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import requests
-from sumy.parsers.plaintext import PlaintextParser
-from sumy.nlp.tokenizers import Tokenizer
-from sumy.summarizers.lsa import LsaSummarizer
 from collections.abc import Sequence
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///news.db'
@@ -124,16 +122,8 @@ def summarize_article():
     if not content:
         return jsonify({'error': 'Content is required'}), 400
 
-    try:
-        # Use Sumy to summarize the content
-        parser = PlaintextParser.from_string(content, Tokenizer("english"))
-        summarizer = LsaSummarizer()
-        summary = summarizer(parser.document, 3)  # Summarize into 3 sentences
-
-        summary_text = " ".join(str(sentence) for sentence in summary)
-        return jsonify({'summary': summary_text})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    # Sumy functionality removed; return placeholder error
+    return jsonify({'error': 'Summarization feature is currently unavailable.'}), 501
 
 @app.route('/reset_password', methods=['GET', 'POST'])
 def reset_password():
